@@ -94,15 +94,15 @@ def recover():
     st.session_state.filtered_notes = st.session_state.notes
 
 st.set_page_config(layout='wide')
-st.title("ICLRの分析")
+st.title("Analysis of ICLR")
 
 paper_tab, stat_tab = st.tabs(["papers", "statistics"])
 
 with paper_tab:
     options = [f"ICLR{x}" for x in range(2024, 2020, -1)]
-    option = st.selectbox(label='年度を選択', options=options)
+    option = st.selectbox(label='select the year', options=options)
 
-    st.button('表示', on_click=button_clicked)
+    st.button('display the table', on_click=button_clicked)
     st.session_state.year = option[4:]
 
     try:
@@ -112,7 +112,7 @@ with paper_tab:
         with col2:
             st.button('filtering', on_click=multi_filtering)
         
-        st.button("元に戻す", on_click=recover)
+        st.button("reset", on_click=recover)
         if st.session_state.filtered_notes.shape[0] != 0:
             st.dataframe(st.session_state.filtered_notes)
         else:
