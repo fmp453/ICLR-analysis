@@ -8,7 +8,7 @@ from wordcloud import WordCloud
 def count_keywords() -> str:
     if "keywords" in st.session_state:
         keywords = st.session_state.keywords
-        keywords.iloc[-50:].plot.barh(figsize=(8, 12), title='ICLR 2024 Submission Top 50 Keywords')
+        keywords.iloc[-50:].plot.barh(figsize=(8, 12), title=f'ICLR {st.session_state.year} Submission Top 50 Keywords')
         img_path = f"data/{st.session_state.year}-top50_keywords.png"
         plt.savefig(img_path, bbox_inches='tight', dpi=300)
         return img_path
