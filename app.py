@@ -128,8 +128,10 @@ with paper_tab:
 
         if st.session_state.filtered_notes.shape[0] != 0:
             st.dataframe(st.session_state.filtered_notes)
-            st.write(st.session_state.columns)
-            st.write(st.session_state)
+            if len(st.session_state.columns) != 0:
+                st.write(f"{st.session_state.filtered_notes.shape[0]} hits")
+            # st.write(st.session_state.columns)
+            # st.write(st.session_state)
         else:
             st.write("<center> No hit </center>", unsafe_allow_html=True)
     
