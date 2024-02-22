@@ -61,8 +61,13 @@ def extract_keywords(df: pd.DataFrame) -> set:
         for _k in kw:
             p = _k.split(";")
             for x in p:
-                if len(x) != 0:
-                    s.add(x)
+                if len(x) == 0:
+                    continue
+                if x[0] == " ":
+                    x = x[1:]
+                if x[-1] == ".":
+                    x = x[:-1]
+                s.add(x)
     
     return s
 
