@@ -80,6 +80,7 @@ def button_clicked():
     st.session_state.notes = notes
     st.session_state.filtered_notes = notes
     st.session_state.key_words = key_words
+    st.session_state.columns = []
 
 def multi_filtering():
     selected_columns = set(st.session_state.columns)
@@ -94,9 +95,7 @@ def multi_filtering():
             new_data = pd.concat([new_data, rec], axis=1)
         
     st.session_state.filtered_notes = new_data.transpose()
-
-def recover():
-    st.session_state.filtered_notes = st.session_state.notes
+    st.session_state.is_pushed_reset = False
 
 st.set_page_config(layout='wide')
 st.title("Analysis of ICLR")
@@ -110,20 +109,30 @@ with paper_tab:
     st.button('display the table', on_click=button_clicked)
     st.session_state.year = option[4:]
 
-    try:
+    st.session_state.is_pushed_reset = False
+
+    if 'filtered_notes' in st.session_state:
         col1, col2 = st.columns((3, 1))
         with col1:
-            st.session_state.columns = st.multiselect('choose the keyword', options=st.session_state.key_words)
+            selcted_columns = st.multiselect('choose the keyword', options=st.session_state.key_words, default=[], key="multiselect")
+    
+            if (not st.session_state.is_pushed_reset) and selcted_columns != st.session_state.columns:
+                st.session_state.columns = selcted_columns
+            
         with col2:
             st.button('filtering', on_click=multi_filtering)
         
-        st.button("reset", on_click=recover)
+        if st.button("reset"):
+            button_clicked()
+            st.session_state.is_pushed_reset = True
+
         if st.session_state.filtered_notes.shape[0] != 0:
             st.dataframe(st.session_state.filtered_notes)
+            st.write(st.session_state.columns)
+            st.write(st.session_state)
         else:
             st.write("<center> No hit </center>", unsafe_allow_html=True)
-    except:
-        pass
+    
 
 with stat_tab:
     try:
