@@ -132,7 +132,7 @@ with paper_tab:
             st.button('filtering', on_click=multi_filtering)
         
         if st.session_state.filtered_notes.shape[0] != 0:
-            st.dataframe(st.session_state.filtered_notes)
+            st.dataframe(st.session_state.filtered_notes, hide_index=True)
             if len(st.session_state.columns) != 0:
                 st.write(f"{st.session_state.filtered_notes.shape[0]} hits")
             # st.write(st.session_state.columns)
