@@ -100,8 +100,19 @@ def multi_filtering():
     new_data = pd.DataFrame()
     for i, kw in enumerate(data):
         kw = [_k.lower().strip() for _k in kw]
-        
-        if selected_columns.issubset(set(kw)):
+        check_set = set()
+        for _k in kw:
+            p = _k.split(";")
+            for x in p:
+                if len(x) == 0:
+                    continue
+                if x[0] == " ":
+                    x = x[1:]
+                if x[-1] == ".":
+                    x = x[:-1]
+                check_set.add(x)
+
+        if selected_columns.issubset(check_set):
             rec = df.iloc[i].T
             new_data = pd.concat([new_data, rec], axis=1)
         
