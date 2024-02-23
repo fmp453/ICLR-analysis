@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from collections import defaultdict
+
 from PIL import Image
 from wordcloud import WordCloud
 
@@ -17,16 +19,20 @@ def count_keywords() -> str:
     df['keywords'] = df['keywords'].apply(eval)
 
     data = df['keywords']
-    keywords = {}
+    keywords = defaultdict(int)
     for kw in data:
         kw = [_k.lower().strip() for _k in kw]
-        for x in kw:
-            # p = _k.split(";")
-            # for x in p:
-                if x in keywords.keys():
-                    keywords[x] += 1
-                else:
-                    keywords[x] = 1
+        for _k in kw:
+            p = _k.split(";")
+            for x in p:
+                if len(x) == 0:
+                    continue
+                if x[0] == " ":
+                    x = x[1:]
+                if x[-1] == ".":
+                    x = x[:-1]
+                
+                keywords[x] += 1
     
     # sort values
     keywords = {k: v for k, v in sorted(keywords.items(), key=lambda item: item[1])[::-1]}
@@ -84,6 +90,11 @@ def button_clicked():
 
 def multi_filtering():
     selected_columns = set(st.session_state.columns)
+
+    if len(selected_columns) == 0:
+        st.session_state.filtered_notes = st.session_state.notes.copy()
+        return 
+
     df:pd.DataFrame = st.session_state.notes.copy()
     data = df['keywords'].apply(eval)
     new_data = pd.DataFrame()
@@ -95,7 +106,6 @@ def multi_filtering():
             new_data = pd.concat([new_data, rec], axis=1)
         
     st.session_state.filtered_notes = new_data.transpose()
-    st.session_state.is_pushed_reset = False
 
 st.set_page_config(layout='wide')
 st.title("Analysis of ICLR")
@@ -106,26 +116,21 @@ with paper_tab:
     options = [f"ICLR{x}" for x in range(2024, 2020, -1)]
     option = st.selectbox(label='select the year', options=options)
 
-    st.button('display the table', on_click=button_clicked)
+    st.button('display the whole table', on_click=button_clicked)
     st.session_state.year = option[4:]
 
-    st.session_state.is_pushed_reset = False
-
+   
     if 'filtered_notes' in st.session_state:
         col1, col2 = st.columns((3, 1))
         with col1:
             selcted_columns = st.multiselect('choose the keyword', options=st.session_state.key_words, default=[], key="multiselect")
     
-            if (not st.session_state.is_pushed_reset) and selcted_columns != st.session_state.columns:
+            if selcted_columns != st.session_state.columns:
                 st.session_state.columns = selcted_columns
             
         with col2:
             st.button('filtering', on_click=multi_filtering)
         
-        if st.button("reset"):
-            button_clicked()
-            st.session_state.is_pushed_reset = True
-
         if st.session_state.filtered_notes.shape[0] != 0:
             st.dataframe(st.session_state.filtered_notes)
             if len(st.session_state.columns) != 0:
