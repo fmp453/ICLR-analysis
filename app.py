@@ -81,7 +81,7 @@ def button_clicked():
     csv_path = f"data/ICLR{option[4:]}.csv"
     
     notes = pd.read_csv(csv_path)
-    notes.drop(columns=["id"], inplace=True)
+    notes.drop(columns=["id", "abstract"], inplace=True)
     key_words = extract_keywords(notes)
     st.session_state.notes = notes
     st.session_state.filtered_notes = notes
@@ -132,7 +132,11 @@ with paper_tab:
             st.button('filtering', on_click=multi_filtering)
         
         if st.session_state.filtered_notes.shape[0] != 0:
-            st.dataframe(st.session_state.filtered_notes, hide_index=True)
+            st.dataframe(
+                st.session_state.filtered_notes, 
+                column_config={"url": st.column_config.LinkColumn()},
+                hide_index=True
+            )
             if len(st.session_state.columns) != 0:
                 st.write(f"{st.session_state.filtered_notes.shape[0]} hits")
             # st.write(st.session_state.columns)
