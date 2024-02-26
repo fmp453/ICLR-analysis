@@ -18,6 +18,14 @@ Run
 streamlit run app.py
 ```
 
+Get Data
+1. Rewrite username and password in `gat_data.py` to those of your account.
+2. Get the data with the following command in case of ICLR 2024
+
+```bash
+python get_data.py 2024
+```
+
 ## Acknowledgements
 
 This repository is inspired by the following:
